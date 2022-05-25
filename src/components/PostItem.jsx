@@ -1,12 +1,14 @@
 import React from 'react';
 
-const PostItem = () => {
+const PostItem = ({post}) => {
     return (
-        <li className="todo">
+        <li className="todo" >
+            <h5>{post.title}</h5>
             <label>
                 <input type="checkbox" />
-                <span>Hello</span>
-                <i className="material-icons red-text" > </i>
+
+                    <span>{post.description}</span>
+                    <i className="material-icons red-text">delete</i>
             </label>
         </li>
     );

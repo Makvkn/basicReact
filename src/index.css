@@ -30,3 +30,32 @@ body {
 .done {
   color: aqua;
 }
+
+li h5 {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.myInputs {
+ display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+}
+
+.inpOne {
+  width: 200px !important;
+  text-align: center;
+}
+
+.inpTwo {
+  width: 500px !important;
+  text-align: center;
+}
+
+.myButton {
+  display: flex;
+  margin-left: auto;
+  margin-top: 20px;
+}

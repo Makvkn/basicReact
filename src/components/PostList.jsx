@@ -1,13 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PostItem from "./PostItem";
 
-const PostList = () => {
+const PostList = ({state}) => {
+
     return (
         <ul>
-            <PostItem />
-            <PostItem />
-            <PostItem />
-
+            {state.map(item => <PostItem post={item} key={item.id}/>)}
         </ul>
     );
 };
