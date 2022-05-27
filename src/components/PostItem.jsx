@@ -1,14 +1,16 @@
 import React from 'react';
 
-const PostItem = ({post}) => {
+const PostItem = ({post,...props}) => {
+
+
     return (
         <li className="todo" >
             <h5>{post.title}</h5>
             <label>
                 <input type="checkbox" />
 
-                    <span>{post.description}</span>
-                    <i className="material-icons red-text">delete</i>
+                    <span >{post.body}</span>
+                    <i className="material-icons red-text" onClick={() => props.removePost(post)}>delete</i>
             </label>
         </li>
     );

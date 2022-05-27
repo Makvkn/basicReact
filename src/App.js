@@ -2,47 +2,81 @@ import logo from './logo.svg';
 import PostItem from "./components/PostItem";
 import PostList from "./components/PostList";
 import AddPost from "./components/UI/AddPost";
-import {useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import MyButton from "./components/UI/button/MyButton";
 import MyInput from "./components/UI/inputs/MyInput";
+import MySelect from "./components/UI/select/MySelect";
+import PostFilter from "./components/PostFilter";
+import {usePosts} from "./hooks/usePosts";
+import axios from "axios";
+import PostService from "./API/PostService";
+import {getPageCount, getPagesArray, getPostsCount} from "./utils/pages";
 
 function App() {
+//USEsTATE
+    const [state, setState] = useState([]);
 
-    const [state, setState] = useState([
-        {id: 1, title: 'random text', description: 'Add note that userScripts and contentScripts are replaced in MV3'},
-        {id: 2, title: 'not random text', description: 'Within a year I had a six-figure job as a Software EngineerV3'},
-        {id: 3, title: 'Simple thoughts', description: 'The well-structured curriculum took my coding knowledge from a total beginner level to a very confident level.'}
-    ]);
-
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
+    const [filter, setFilter] = useState({sort: '', query: ''})
+    const sortedAndSearchedPost = usePosts(state, filter.sort, filter.query)
+    const [isPostLoading, setIsPostLoading] = useState(false)
+    const [totalPage, setTotalPage] = useState('0')
+    const [limit, setLimit] = useState('10')
+    const [page, setPage] = useState('1')
 
 
-const addNewPost = (e) => {
-        e.preventDefault()
-    const newPost = {
-            id: Date.now(),
-        title,
-        description
+
+//request
+    async function fetchPosts() {
+        setIsPostLoading(true)
+            const response = await PostService.getAll(limit, page)
+            setState(response.data)
+            setIsPostLoading(false)
+        const totalCount = response.headers['x-total-count']
+        setTotalPage(getPageCount(totalCount, limit))
+
+
     }
-    console.log(newPost)
-    setState([...state, newPost])
-}
+    let pageArray = getPagesArray(totalPage)
+    console.log(pageArray)
+
+    useEffect(() => {
+        fetchPosts()
+    },[])
 
 
-  return (
-    <div className="container">
-      <div className="App-header">
-          <div className='myInputs '>
-              <MyInput type="text" style={'inpOne'} placeholder={'Add post name'} value={title} onChange={e => setTitle(e.target.value)} />
-              <MyInput type="text" style={'inpTwo'} placeholder={'Add post content'} value={description} onChange={e => setDescription(e.target.value)}/>
-          </div>
+//CREATE
+    const createPost = (newPost) => {
+        setState([...state, newPost])
+    }
+//REMOVE
+    const removePost = (post) => {
+        setState(state.filter(item => item.id !== post.id))
+    }
 
-          <MyButton onClick={addNewPost} >Add Post</MyButton>
-          <PostList state={state}/>
-      </div>
-    </div>
-  );
+    return (
+        <div className="container">
+            <button onClick={fetchPosts}>Fetch</button>
+            <div className="App-header">
+                <div style={{display: 'flex'}}>
+                    {pageArray.map(p =>
+                        <MyButton
+                            onClick={() => setPage(p)}
+                            className='myButton'>{p}</MyButton>
+                    )}
+                </div>
+                <AddPost create={createPost}/>
+                <hr style={{margin: '15px '}}/>
+                <div>
+                    <PostFilter
+                        filter={filter}
+                        setFilter={setFilter}
+                    />
+                </div>
+                <PostList state={sortedAndSearchedPost} removePost={removePost}/>
+
+            </div>
+        </div>
+    );
 }
 
 export default App;

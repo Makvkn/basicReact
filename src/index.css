@@ -59,3 +59,13 @@ li h5 {
   margin-left: auto;
   margin-top: 20px;
 }
+
+h3 {
+  display: flex;
+  justify-content: center;
+}
+
+select {
+  display: block;
+  width: 35%;
+}
